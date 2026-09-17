@@ -10,10 +10,15 @@ if not my_api_key:
 client = Groq(api_key=my_api_key)
 model = "openai/gpt-oss-20b"
 role = "user"
-content = "Do you know Gyanendra"
+content = "Suggest a name for my clothing company"
+message_system = {
+    "role": "system",
+    "content": "You are a brand manager who suggest name for my brand. Only only word",
+}
 message = {"role": role, "content": content}
-messages = [message]
-response = client.chat.completions.create(model=model, messages=messages)
+messages = [message_system, message]
+# Temperatue ramge is [0,2]
+response = client.chat.completions.create(model=model, messages=messages, temperature=2)
 # print(response)
 answer = response.choices[0].message.content
 print(answer)
