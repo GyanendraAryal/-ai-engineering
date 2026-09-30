@@ -17,7 +17,6 @@ knowledge_base = {
     "net_worth": "The net worth of speed is a billion dollars",
 }
 
-
 # Step-2
 def retrieve_info(question):
     question = question.lower()
