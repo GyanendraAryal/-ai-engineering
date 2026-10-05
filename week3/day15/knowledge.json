@@ -1,0 +1,77 @@
+[
+  {
+    "text": "Employees receive 24 days of paid leave per year.",
+    "category": "leave",
+    "is_active": true
+  },
+  {
+    "text": "Employees work from the office on Tuesday, Wednesday and Thursday.",
+    "category": "workplace",
+    "is_active": true
+  },
+  {
+    "text": "Monday and Friday are optional work-from-home days.",
+    "category": "workplace",
+    "is_active": true
+  },
+  {
+    "text": "Employees receive Rs 3000 per month for gym reimbursement.",
+    "category": "reimbursement",
+    "is_active": true
+  },
+  {
+    "text": "Sick leave must be reported within 2 hours of shift start.",
+    "category": "leave",
+    "is_active": true
+  },
+  {
+    "text": "Annual bonus is paid in December based on performance.",
+    "category": "compensation",
+    "is_active": true
+  },
+  {
+    "text": "Public holidays are observed as per Nepal calendar.",
+    "category": "holidays",
+    "is_active": true
+  },
+  {
+    "text": "Maternity leave is 45 days with full salary.",
+    "category": "leave",
+    "is_active": true
+  },
+  {
+    "text": "Medical expenses up to Rs 50,000 are covered annually.",
+    "category": "benefits",
+    "is_active": true
+  },
+  {
+    "text": "Casual leave requires 1 day advance notice.",
+    "category": "leave",
+    "is_active": true
+  },
+  {
+    "text": "Office timings are 9 AM to 6 PM with 1 hour lunch break.",
+    "category": "workplace",
+    "is_active": true
+  },
+  {
+    "text": "Professional development courses are reimbursed up to Rs 20,000 per year.",
+    "category": "reimbursement",
+    "is_active": true
+  },
+  {
+    "text": "Employees are entitled to 10 days of bereavement leave.",
+    "category": "leave",
+    "is_active": true
+  },
+  {
+    "text": "Performance reviews are conducted quarterly.",
+    "category": "performance",
+    "is_active": true
+  },
+  {
+    "text": "Mobile and internet allowance is Rs 1500 per month.",
+    "category": "compensation",
+    "is_active": true
+  }
+]

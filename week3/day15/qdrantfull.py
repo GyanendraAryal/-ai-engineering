@@ -1,11 +1,17 @@
 import os
 from groq import Groq
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
-
-# Distance:- for cosine similarity
-# VectorParams:- kind of instruction manual for vector DB
-# PointStruct:- to create points
+from qdrant_client.models import (
+    Distance,
+    VectorParams,
+    PointStruct,
+    Filter,
+    FieldCondition,
+    MatchValue,
+    MatchAny,
+    PayloadSchemaType,
+)
+import json
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 
@@ -23,7 +29,7 @@ print("Connected to Qdrant cloud!")
 
 
 # 2 Create Qdrant Collection
-COLLECTION_NAME = "knowledge"
+COLLECTION_NAME = "knowledge_filter"
 EMBEDDING_SIZE = 384
 
 # Delete collection if already exists
@@ -43,30 +49,35 @@ print(f"Collection name: {COLLECTION_NAME}")
 print(f"Vector size: {EMBEDDING_SIZE}")
 print(f"Distance: {Distance.COSINE}")
 
+# Creating index
+client.create_payload_index(
+    collection_name=COLLECTION_NAME,
+    field_name="category",
+    field_schema=PayloadSchemaType.KEYWORD,
+)
+
 # 3 Load our knowledge
-with open("knowledge.txt", "r", encoding="utf-8") as f:
-    documents = [line.strip() for line in f if line.strip()]
-print(f"Loaded {len(documents)} documents")
+with open("knowledge.json", "r", encoding="utf-8") as f:
+    documents = json.load(f)
 
 # 4 Create Embeddings
 print("Loading embedding model...")
 model = SentenceTransformer("all-MiniLM-L6-v2")
 print("Embedding model is ready to go.")
+texts = [document["text"] for document in documents]
 
-embeddings = model.encode(documents)
+embeddings = model.encode(texts)
 print(f"Generate {len(embeddings)} embeddings")
 print(f"Embedding size: {len(embeddings[0])}")
 
 # 5 Create Qdrant size
 points = []
 
-for i, embeddings in enumerate(embeddings):
+for i in range(len(documents)):
     point = PointStruct(
         id=i + 1,
-        vector=embeddings.tolist(),
-        payload={
-            "text": documents[i],
-        },
+        vector=embeddings[i].tolist(),
+        payload=documents[i],
     )
     points.append(point)
 
@@ -93,9 +104,32 @@ def search(query, top_k=3):
     return results
 
 
+# search with filter
+def search_with_filter(query, query_filter=None, top_k=3):
+    query_vector = model.encode(query).tolist()
+    results = client.query_points(
+        collection_name=COLLECTION_NAME,
+        query=query_vector,
+        limit=top_k,
+        with_payload=True,
+        query_filter=query_filter,
+    ).points
+    return results
+
+
+reimbursement_filter = Filter(
+    must=[
+        FieldCondition(
+            key="category",
+            match=MatchValue(value="reimbursement"),
+        )
+    ]
+)
+
+
 # 8 Test Search
-query = "How many vacations do i get?"
-results = search(query, top_k=3)
+query = "How many days leave do I get?"
+results = search_with_filter(query, reimbursement_filter, top_k=3)
 print("\n Search results: ")
 for result in results:
     print(f"Score: {result.score:.3f}")
@@ -130,7 +164,8 @@ def ask_llm(question, context):
 
 
 # 11 Complete RAG pipeline
-question = "How many vacation days do I get?"
+# question = "How many vacation days do I get?"
+question = "Bereavement leave policy"
 results = search(question, top_k=3)
 # Extract text from the search results
 context = "\n".join(result.payload["text"] for result in results)
